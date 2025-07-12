@@ -23,12 +23,12 @@ import {
 
 export default function DashboardPage() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [popupOpen, setPopupOpen] = useState(false);
+  const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handlePopupOpen = () => setPopupOpen(true);
-  const handlePopupClose = () => setPopupOpen(false);
+  const handleCreateProjectOpen = () => setCreateProjectOpen(true);
+  const handleCreateProjectClose = () => setCreateProjectOpen(false);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -70,9 +70,8 @@ export default function DashboardPage() {
         {/* Pink Sidebar */}
         <Box sx={{ width: 240, bgcolor: "#f9c2ff", p: 2 }}>
           <List>
-            <ListItem><ListItemText primary="Account Settings" /></ListItem>
-            <ListItem button onClick={() => setPopupOpen(true)}><ListItemText primary="+ Create Project" /></ListItem>
-            <ListItem><ListItemText primary="MATCH" sx={{ color: "green" }} /></ListItem>
+            <ListItem button onClick={() => setCreateProjectOpen(true)}><ListItemText primary="Create Project" /></ListItem>
+            <ListItem button onClick={() => setCreateProjectOpen(true)}><ListItemText primary="MATCH" /></ListItem>
           </List>
         </Box>
 
@@ -96,15 +95,15 @@ export default function DashboardPage() {
         </Box>
 
         {/* Pop-up Window / Dialog */}
-        <Dialog open={popupOpen} onClose={handlePopupClose}>
+        <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
           <DialogTitle>Create Project</DialogTitle>
           <DialogContent>
             <TextField fullWidth label="Project Name" margin="normal" />
             <TextField fullWidth multiline rows={4} label="Description" margin="normal" />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handlePopupClose}>Cancel</Button>
-            <Button variant="contained" onClick={handlePopupClose}>Create</Button>
+            <Button onClick={handleCreateProjectClose}>Cancel</Button>
+            <Button variant="contained" onClick={handleCreateProjectClose}>Create</Button>
           </DialogActions>
         </Dialog>
       </Box>
