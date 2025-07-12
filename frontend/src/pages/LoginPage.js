@@ -10,6 +10,10 @@ export default function LoginPage() {
     navigate('/dashboardstudent');
   }
 
+  const handleAdminLogin = (e) => {
+    navigate('/dashboardadmin');
+  }
+
   return (
     <Box
       sx={{
@@ -37,9 +41,12 @@ export default function LoginPage() {
         </Typography>
 
 
-          <Button onClick={handleLogin} variant="contained" color="primary">
-            CS Login
-          </Button>
+        <Button onClick={handleLogin} variant="contained" color="primary">
+          CS Login
+        </Button>
+        <Button sx={{ marginLeft: 2 }} onClick={handleAdminLogin} variant="contained" color="primary">
+          Admin Login
+        </Button>
       </Container>
     </Box>
   );

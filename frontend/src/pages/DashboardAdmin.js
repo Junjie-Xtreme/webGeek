@@ -19,16 +19,26 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Drawer,
+  IconButton,
+  Divider,
 } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 export default function DashboardPage() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [createProjectOpen, setCreateProjectOpen] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handleCreateProjectOpen = () => setCreateProjectOpen(true);
-  const handleCreateProjectClose = () => setCreateProjectOpen(false);
+  const handlePopupOpen = () => setPopupOpen(true);
+  const handlePopupClose = () => setPopupOpen(false);
+
+  const drawerWidth = 300;
+  const [open, setOpen] = useState(true);
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -44,15 +54,12 @@ export default function DashboardPage() {
           </Box>
 
           <Typography variant="h5" align="center" sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-            DraftDay (Summer 2025)
+            DraftDay
           </Typography>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Button color="inherit">+ Add Semester</Button>
-            <TextField size="small" placeholder="Search Project.." sx={{ bgcolor: "white", borderRadius: 1 }} />
-            <TextField size="small" placeholder="Filter Semester" sx={{ bgcolor: "white", borderRadius: 1 }} />
             <Button color="inherit" onClick={handleMenuOpen}>
-              Welcome! (usersName)
+              Welcome! (userName)
             </Button>
           </Box>
 
@@ -65,18 +72,52 @@ export default function DashboardPage() {
             </Menu>
       </AppBar>
 
+
       {/* Main Content */}
       <Box sx={{ display: "flex", flexGrow: 1 }}>
-        {/* Pink Sidebar */}
-        <Box sx={{ width: 240, bgcolor: "#f9c2ff", p: 2 }}>
+
+        {/* Pink Sidebar */} 
+        {!open && ( <IconButton onClick={handleDrawerOpen}><MenuIcon /></IconButton>)}
+        <Drawer
+        variant="persistent"
+        anchor="left"
+        open={open}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            top: '64px', 
+            backgroundColor: 'pink',
+          },
+        }}
+      >
+        <Toolbar>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Toolbar>
+
           <List>
-            <ListItem button onClick={() => setCreateProjectOpen(true)}><ListItemText primary="Create Project" /></ListItem>
-            <ListItem button onClick={() => setCreateProjectOpen(true)}><ListItemText primary="MATCH" /></ListItem>
+            <Divider />
+            <ListItem><ListItemText primary="Account Settings" /></ListItem>
+            <Divider />
+            <ListItem button onClick={() => setPopupOpen(true)}><ListItemText primary="+ Create Project" /></ListItem>
+            <Divider />
+            <ListItem button><ListItemText primary="MATCH" sx={{ color: "green" }} /></ListItem>
+            <Divider />
           </List>
-        </Box>
+      </Drawer>
+
 
         {/* Main Content */}
         <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Button onClick={() => setPopupOpen(true)} color="inherit">+ Add Semester</Button>
+            <TextField size="small" placeholder="Search Project.." sx={{ bgcolor: "white", borderRadius: 1 }} />
+            <TextField size="small" placeholder="Filter Semester" sx={{ bgcolor: "white", borderRadius: 1 }} />
+          </Box>
           {/* Cards Area */}
           <Box sx={{ p: 3 }}>
             <Grid container spacing={2}>
@@ -95,15 +136,15 @@ export default function DashboardPage() {
         </Box>
 
         {/* Pop-up Window / Dialog */}
-        <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
+        <Dialog open={popupOpen} onClose={handlePopupClose}>
           <DialogTitle>Create Project</DialogTitle>
           <DialogContent>
             <TextField fullWidth label="Project Name" margin="normal" />
             <TextField fullWidth multiline rows={4} label="Description" margin="normal" />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCreateProjectClose}>Cancel</Button>
-            <Button variant="contained" onClick={handleCreateProjectClose}>Create</Button>
+            <Button onClick={handlePopupClose}>Cancel</Button>
+            <Button variant="contained" onClick={handlePopupClose}>Create</Button>
           </DialogActions>
         </Dialog>
       </Box>
