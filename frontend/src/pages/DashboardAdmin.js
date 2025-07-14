@@ -61,16 +61,17 @@ export default function DashboardPage() {
 
   const [projects, setProjects] = useState([]);
 
+
   return (
     <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
 
       {/* Maroon Top Bar */}
       <AppBar position="static" sx={{ bgcolor: "#800035" }}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Toolbar sx={{ height: 90, display: "flex", justifyContent: "space-between", alignItems:"center" }}>
 
           <Box sx={{ width: 200 }}>
             <Typography variant="h5" align="center">
-              (VT Logo)
+             (VT Logo)
             </Typography>
           </Box>
 
