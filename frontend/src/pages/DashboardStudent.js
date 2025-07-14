@@ -1,7 +1,8 @@
-// src/pages/Dashboard.js
+// src/pages/DashboardStudent.js
 import { mockStudent } from '../mockStudent';
 import { mockProjects } from '../mockProjects';
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import {
     AppBar,
     Toolbar,
@@ -22,21 +23,26 @@ import {
     DialogContent,
     DialogActions,
 } from "@mui/material";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function DashboardPage() {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [createProjectOpen, setCreateProjectOpen] = useState(false);
     const [myProfileOpen, setMyProfileOpen] = useState(false)
     const [selectedProject, setSelectedProject] = useState(null);
 
     const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
 
-    const handleCreateProjectOpen = () => setCreateProjectOpen(true);
-    const handleCreateProjectClose = () => setCreateProjectOpen(false);
 
     const handleMyProfileOpen = () => { handleMenuClose(); setMyProfileOpen(true) };
     const handleMyProfileClose = () => setMyProfileOpen(false);
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        handleMenuClose();
+        navigate('/');
+    };
 
     return (
         <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -52,7 +58,7 @@ export default function DashboardPage() {
                         }}
                     >
                         <Typography variant="h5" align="center">
-                            VT Logo / VT
+                            (VT Logo)
                         </Typography>
                     </Box>
 
@@ -62,7 +68,7 @@ export default function DashboardPage() {
 
                     <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                         <Button color="inherit" onClick={handleMenuOpen}>
-                            {mockStudent.name}
+                            {mockStudent.name} <ArrowDropDownIcon />
                         </Button>
                     </Box>
 
@@ -70,7 +76,7 @@ export default function DashboardPage() {
 
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
                     <MenuItem onClick={handleMyProfileOpen}>My Profile</MenuItem>
-                    <MenuItem onClick={handleMenuClose}>Log Out</MenuItem>
+                    <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                 </Menu>
             </AppBar>
 
@@ -79,8 +85,11 @@ export default function DashboardPage() {
                 {/* Pink Sidebar */}
                 <Box sx={{ width: 240, bgcolor: "#f9c2ff", p: 2, flexShrink: 0 }}>
                     <List>
-                        <ListItem button onClick={() => setCreateProjectOpen(true)} sx={{ cursor: "pointer" }}>
-                            <ListItemText primary="No Need Just Example" />
+                        <ListItem button onClick={handleMyProfileOpen} sx={{ cursor: "pointer" }}>
+                            <ListItemText primary="My Profile" />
+                        </ListItem>
+                        <ListItem button sx={{ cursor: "pointer" }}>
+                            <ListItemText primary="My Skills" />
                         </ListItem>
                     </List>
                 </Box>
@@ -128,19 +137,6 @@ export default function DashboardPage() {
                     </Box>
                 </Box>
 
-                {/* Create Project Pop-up Window */}
-                <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
-                    <DialogTitle>Create Project</DialogTitle>
-                    <DialogContent>
-                        <TextField fullWidth label="Project Name" margin="normal" />
-                        <TextField fullWidth multiline rows={4} label="Description" margin="normal" />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCreateProjectClose}>Cancel</Button>
-                        <Button variant="contained" onClick={handleCreateProjectClose}>Create</Button>
-                    </DialogActions>
-                </Dialog>
-
                 {/* My Profile Pop-up Window */}
                 <Dialog open={myProfileOpen} onClose={handleMyProfileClose}>
                     <DialogTitle align="center" variant="h6">My Profile</DialogTitle>
@@ -151,7 +147,7 @@ export default function DashboardPage() {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleMyProfileClose}>Cancel</Button>
-                        <Button variant="contained" onClick={handleMyProfileClose}>Save</Button>
+                        <Button variant="contained" onClick={handleMyProfileClose}>OK</Button>
                     </DialogActions>
                 </Dialog>
             </Box>

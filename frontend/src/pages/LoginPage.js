@@ -42,7 +42,7 @@ export default function LoginPage() {
 
 
         <Button onClick={handleLogin} variant="contained" color="primary">
-          CS Login
+          Student Login
         </Button>
         <Button sx={{ marginLeft: 2 }} onClick={handleAdminLogin} variant="contained" color="primary">
           Admin Login
