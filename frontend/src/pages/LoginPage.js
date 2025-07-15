@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 export default function LoginPage() {
   const navigate = useNavigate();
   const handleLogin = (e) => {
-    //window.location.href = 'http://localhost:5000/auth/cas/login'; // CAS, dashboard page need redirected by endfront
-    navigate('/dashboardstudent');
+    window.location.href = 'http://localhost:5000/auth/cas/';
+    //navigate('/dashboardstudent');
   }
 
   const handleAdminLogin = (e) => {
