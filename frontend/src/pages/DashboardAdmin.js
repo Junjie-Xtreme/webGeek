@@ -1,6 +1,7 @@
 // src/pages/DashboardAdmin.js
-import { mockStudent } from '../mockStudent';
+import { mockData } from '../mock_data';
 import { mockProjects } from '../mockProjects';
+import { mockStudent } from '../mockStudent';
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -167,18 +168,18 @@ export default function DashboardPage() {
             {/* Project Cards */}
             <Box sx={{ p: 3 }}>
               <Grid container spacing={2}>
-                {mockProjects.map((project) => (
+                {mockData.projects.map((project) => (
                   <Grid item xs={12} sm={6} md={4} key={project.id}>
                     <Card sx={{ height: 220, backgroundColor: "#1976d2", cursor: "pointer", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
                       onClick={() => setSelectedProject(project)}
                     >
                       <CardContent>
-                        <Typography color="white" variant="h6" align="center">{project.projectName}</Typography>
+                        <Typography color="white" variant="h6" align="center">{project.title}</Typography>
                         <Typography color="white">{project.description}</Typography>
-                        <Typography color="white">Skills: {project.requiredSkills.join(', ')}</Typography>
+                        {/* <Typography color="white">Skills: {project.requiredSkills.join(', ')}</Typography>
                         <Typography color="white">
                           Members: {project.currentMembers} {project.full ? "(Full)" : "(Open)"}
-                        </Typography>
+                        </Typography> */}
                       </CardContent>
                     </Card>
                   </Grid>
@@ -190,13 +191,25 @@ export default function DashboardPage() {
             <Box sx={{ mt: 4 }}>
               {selectedProject ? (
                 <Box>
-                  <Typography variant="h5" gutterBottom>{selectedProject.projectName}</Typography>
+                  <Typography variant="h5" gutterBottom>{selectedProject.title}</Typography>
                   <Typography gutterBottom>{selectedProject.description}</Typography>
                   <Typography gutterBottom>
-                    Required Skills: {selectedProject.requiredSkills.join(", ")}
+                  Project Skills:
                   </Typography>
                   <Typography gutterBottom>
-                    Current Members: {selectedProject.currentMembers} {selectedProject.full ? "(Full)" : "(Open)"}
+                  Current Members:
+                  </Typography>
+                  <Typography gutterBottom>
+                    Max Capacity: {selectedProject.maxCapacity}
+                  </Typography>
+                  <Typography gutterBottom>
+                    Team Name: {selectedProject.teamName}
+                  </Typography>
+                  <Typography gutterBottom>
+                    Created At: {selectedProject.created_at}
+                  </Typography>
+                  <Typography gutterBottom>
+                    Updated At: {selectedProject.updated_at}
                   </Typography>
                 </Box>
               ) : (
@@ -205,6 +218,7 @@ export default function DashboardPage() {
             </Box>
           </Box>
 
+  {/* ---------------------------------------------------------------------------------- */}
           {/* Create Project Pop-up Window */}
           <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
             <DialogTitle>Create Project</DialogTitle>
