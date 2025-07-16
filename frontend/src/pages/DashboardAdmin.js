@@ -69,7 +69,7 @@ export default function DashboardPage() {
       <AppBar position="static" sx={{ bgcolor: "#800035" }}>
         <Toolbar sx={{ height: 90, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 
-          <Box sx={{ width: 200 }}>
+          <Box sx={{ width: 200, display: { xs: 'none', md: 'block' } }}>
             <Typography variant="h5" align="center">
               (VT Logo)
             </Typography>
