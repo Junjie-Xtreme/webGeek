@@ -1,6 +1,7 @@
 // src/pages/DashboardStudent.js
 import mockData from '../mockdatafrommike';
 // components
+import TopBarMaroon from '../components/TopBarMaroon';
 import MySkillsDialog from '../components/MySkillsDialog';
 // hooks
 import React, { useState } from "react";
@@ -41,37 +42,14 @@ export default function DashboardPage() {
         <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
 
             {/* Maroon Top Bar */}
-            <AppBar position="static" sx={{ bgcolor: "#861F41" }}>
-                <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-
-                    <Box
-                        sx={{
-                            width: 200,
-                            display: { xs: 'none', md: 'block' }
-                        }}
-                    >
-                        <Typography variant="h5" align="center">
-                            (VT Logo)
-                        </Typography>
-                    </Box>
-
-                    <Typography variant="h5" align="center" noWrap sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-                        DraftDay (Summer 2025)
-                    </Typography>
-
-                    <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                        <Button color="inherit" onClick={handleMenuOpen}>
-                            {mockData.users[i].username} <ArrowDropDownIcon />
-                        </Button>
-                    </Box>
-
-                </Toolbar>
-
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                    <MenuItem onClick={handleMyProfileOpen}>My Profile</MenuItem>
-                    <MenuItem onClick={handleLogout}>Log Out</MenuItem>
-                </Menu>
-            </AppBar>
+            <TopBarMaroon
+                username={mockData.users[i].username}
+                anchorEl={anchorEl}
+                onMenuOpen={handleMenuOpen}
+                onMenuClose={handleMenuClose}
+                onMyProfileOpen={handleMyProfileOpen}
+                onLogout={handleLogout}
+            />
 
             {/* Main Content */}
             <Box sx={{ display: "flex", flexGrow: 1 }}>
