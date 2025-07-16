@@ -1,6 +1,13 @@
 // src/pages/DashboardAdmin.js
-import { mockStudent } from '../mockStudent';
+import mockData from '../mockdatafrommike';
+//import { mockStudent } from '../mockStudent';
 import { mockProjects } from '../mockProjects';
+
+// components
+import TopBarMaroon from '../components/TopBarMaroon';
+import EditProjectDialog from '../components/EditProjectDialog';
+
+// hooks
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -28,8 +35,10 @@ import {
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SettingsIcon from '@mui/icons-material/Settings';
+
+// student array 0 is jdoe, 1 is asmith, 2 is bjohnson; NOTE: i (start from 0) is not id (start from 1)
+const i = 0;
 
 export default function DashboardPage() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,39 +70,20 @@ export default function DashboardPage() {
 
   const [projects, setProjects] = useState([]);
 
+  const [editProjectOpen, setEditProjectOpen] = useState(false);
+  const [editableProject, setEditableProject] = useState(null);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
-
       {/* Maroon Top Bar */}
-      <AppBar position="static" sx={{ bgcolor: "#800035" }}>
-        <Toolbar sx={{ height: 90, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-
-          <Box sx={{ width: 200, display: { xs: 'none', md: 'block' } }}>
-            <Typography variant="h5" align="center">
-              (VT Logo)
-            </Typography>
-          </Box>
-
-          <Typography variant="h5" align="center" sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-            DraftDay
-          </Typography>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Button color="inherit" onClick={handleMenuOpen}>
-              {mockStudent.name} <ArrowDropDownIcon />
-            </Button>
-          </Box>
-
-        </Toolbar>
-
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-          <MenuItem onClick={handleMyProfileOpen}>My Profile</MenuItem>
-          <MenuItem onClick={handleMenuClose}>Account Settings</MenuItem>
-          <MenuItem onClick={handleLogout}>Log Out</MenuItem>
-        </Menu>
-      </AppBar>
-
+      <TopBarMaroon
+        username={mockData.users[i].username}
+        anchorEl={anchorEl}
+        onMenuOpen={handleMenuOpen}
+        onMenuClose={handleMenuClose}
+        onMyProfileOpen={handleMyProfileOpen}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
       <Box sx={{ display: "flex", flexGrow: 1 }}>
@@ -167,22 +157,59 @@ export default function DashboardPage() {
             {/* Project Cards */}
             <Box sx={{ p: 3 }}>
               <Grid container spacing={2}>
-                {mockProjects.map((project) => (
-                  <Grid item xs={12} sm={6} md={4} key={project.id}>
-                    <Card sx={{ height: 220, backgroundColor: "#1976d2", cursor: "pointer", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                      onClick={() => setSelectedProject(project)}
-                    >
-                      <CardContent>
-                        <Typography color="white" variant="h6" align="center">{project.projectName}</Typography>
-                        <Typography color="white">{project.description}</Typography>
-                        <Typography color="white">Skills: {project.requiredSkills.join(', ')}</Typography>
-                        <Typography color="white">
-                          Members: {project.currentMembers} {project.full ? "(Full)" : "(Open)"}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                {mockData.projects.map((project) => {
+                  const relatedSkills = mockData.project_skills
+                    .filter(ps => ps.project_id === project.id)
+                    .map(ps => {
+                      const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                      return skill?.name || 'UNDEFINED';
+                    });
+
+                  return (
+                    <Grid item xs={12} sm={6} md={4} key={project.id} sx={{ width: 'flex' }}>
+                      <Card sx={{ width: '100%', backgroundColor: "#1976d2", cursor: "pointer", display: "flex", flexDirection: "column", justifyContent: "space-between", flexGrow: 1 }}
+                        onClick={() => setSelectedProject(project)}
+                      >
+                        <CardContent sx={{ flexGrow: 1 }}>
+                          <Typography color="white" variant="h6" align="center">{project.title}</Typography>
+                          <Typography color="white"><strong>Description:</strong> {project.description}</Typography>
+                          <Typography color="white"><strong>Skills:</strong> {relatedSkills.join(', ') || 'None'}</Typography>
+                          <Typography color="white"><strong>Team Name:</strong> {project.teamName || '"UNDEFINED"'}</Typography>
+                          <Typography color="white">
+                            <strong>Capacity:</strong>{' '}
+                            {mockData.project_users.filter(pu => pu.project_id === project.id).length}
+                            /{project.maxCapacity}
+                            {
+                              mockData.project_users.filter(pu => pu.project_id === project.id).length === project.maxCapacity
+                                ? ' (Full)'
+                                : ' (Open)'
+                            }
+                          </Typography>
+                        </CardContent>
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            sx={{ backgroundColor: "white", color: "#1976d2", fontWeight: 'bold' }}
+                            onClick={() => {
+                              // Extract the array of skill names
+                              const relatedSkillNames = mockData.project_skills
+                                .filter(ps => ps.project_id === project.id)
+                                .map(ps => {
+                                  const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                                  return skill?.name || 'UNDEFINED';
+                                });
+                              setEditableProject({ ...project, skills: relatedSkillNames });
+                              setEditProjectOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Box>
 
@@ -190,13 +217,30 @@ export default function DashboardPage() {
             <Box sx={{ mt: 4 }}>
               {selectedProject ? (
                 <Box>
-                  <Typography variant="h5" gutterBottom>{selectedProject.projectName}</Typography>
+                  <Typography variant="h5" gutterBottom>{selectedProject.title}</Typography>
                   <Typography gutterBottom>{selectedProject.description}</Typography>
                   <Typography gutterBottom>
-                    Required Skills: {selectedProject.requiredSkills.join(", ")}
+                    Skills: {
+                      mockData.project_skills
+                        .filter(ps => ps.project_id === selectedProject.id)
+                        .map(ps => {
+                          const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                          return skill?.name;
+                        })
+                        .filter(Boolean)
+                        .join(', ') || 'None'
+                    }
                   </Typography>
+                  <Typography gutterBottom>Team Name: {selectedProject.teamName || '"UNDEFINED"'}</Typography>
                   <Typography gutterBottom>
-                    Current Members: {selectedProject.currentMembers} {selectedProject.full ? "(Full)" : "(Open)"}
+                    Capacity: {
+                      mockData.project_users.filter(pu => pu.project_id === selectedProject.id).length
+                    }/{selectedProject.maxCapacity}
+                    {
+                      mockData.project_users.filter(pu => pu.project_id === selectedProject.id).length === selectedProject.maxCapacity
+                        ? ' (Full)'
+                        : ' (Open)'
+                    }
                   </Typography>
                 </Box>
               ) : (
@@ -205,7 +249,7 @@ export default function DashboardPage() {
             </Box>
           </Box>
 
-          {/* Create Project Pop-up Window */}
+          {/* Create Project (Pop-up Window) */}
           <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
             <DialogTitle>Create Project</DialogTitle>
             <DialogContent>
@@ -218,19 +262,31 @@ export default function DashboardPage() {
             </DialogActions>
           </Dialog>
 
-          {/* My Profile Pop-up Window */}
+          {/* My Profile (Pop-up Window) */}
           <Dialog open={myProfileOpen} onClose={handleMyProfileClose}>
             <DialogTitle align="center" variant="h6">My Profile</DialogTitle>
             <DialogContent>
-              <Typography variant="subtitle1"><strong>Name:</strong> {mockStudent.name}</Typography>
-              <Typography variant="subtitle1"><strong>VT Username:</strong> {mockStudent.vtUsername}</Typography>
-              <Typography variant="subtitle1"><strong>Email:</strong> {mockStudent.email}</Typography>
+              <Typography variant="subtitle1"><strong>Name:</strong> {mockData.users[i].name || '"UNDEFINED'}</Typography>
+              <Typography variant="subtitle1"><strong>VT Username:</strong> {mockData.users[i].username}</Typography>
+              <Typography variant="subtitle1"><strong>Email:</strong> {mockData.users[i].edupersonprincipalname}</Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleMyProfileClose}>Cancel</Button>
               <Button variant="contained" onClick={handleMyProfileClose}>OK</Button>
             </DialogActions>
           </Dialog>
+
+          {/* Edit Selected Project (Pop-up Window) */}
+          <EditProjectDialog
+            open={editProjectOpen}
+            onClose={() => setEditProjectOpen(false)}
+            project={editableProject || {}}
+            setProject={setEditableProject}
+            onSave={(updatedProject) => {
+              console.log("Saving updated project:", updatedProject);
+              setEditProjectOpen(false);
+            }}
+          />
         </Box>
       </Box >
     </Box >
