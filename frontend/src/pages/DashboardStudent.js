@@ -11,7 +11,6 @@ import {
     AppBar, Toolbar, Typography, Button, Box, List, ListItem, ListItemText, Menu, MenuItem, Grid, Card, CardContent, TextField,
     Dialog, DialogTitle, DialogContent, DialogActions, Checkbox
 } from "@mui/material";
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 // student array 0 is jdoe, 1 is asmith, 2 is bjohnson; NOTE: i (start from 0) is not id (start from 1)
 const i = 0;
 
@@ -53,7 +52,7 @@ export default function DashboardPage() {
 
             {/* Main Content */}
             <Box sx={{ display: "flex", flexGrow: 1 }}>
-                {/* Pink Sidebar */}
+                {/* Orange Sidebar */}
                 <Box sx={{ width: 200, bgcolor: "#E5751F", p: 2, flexShrink: 0 }}>
                     <List>
                         <ListItem button onClick={handleMyProfileOpen} sx={{ cursor: "pointer" }}>
@@ -148,7 +147,7 @@ export default function DashboardPage() {
                 <Dialog open={myProfileOpen} onClose={handleMyProfileClose}>
                     <DialogTitle align="center" variant="h6">My Profile</DialogTitle>
                     <DialogContent>
-                        <Typography variant="subtitle1"><strong>Name:</strong> {mockData.users?.[i]?.name || "UNDEFINED in mockData"}</Typography>
+                        <Typography variant="subtitle1"><strong>Name:</strong> {mockData.users[i].name || "UNDEFINED in mockData"}</Typography>
                         <Typography variant="subtitle1"><strong>VT Username:</strong> {mockData.users[i].username}</Typography>
                         <Typography variant="subtitle1"><strong>Email:</strong> {mockData.users[i].edupersonprincipalname}</Typography>
                     </DialogContent>
