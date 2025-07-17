@@ -1,16 +1,19 @@
 // src/pages/DashboardStudent.js
+
 import mockData from '../mockdatafrommike';
 // components
 import TopBarMaroon from '../components/TopBarMaroon';
+import ProfileDialog from '../components/ProfileDialog';
 import MySkillsDialog from '../components/MySkillsDialog';
+import EditTeamDialog from '../components/EditTeamDialog';
 // hooks
 import React, { useState } from "react";
 // loginPage.js navigate
 import { useNavigate } from 'react-router-dom';
 import {
-    AppBar, Toolbar, Typography, Button, Box, List, ListItem, ListItemText, Menu, MenuItem, Grid, Card, CardContent, TextField,
-    Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Divider
+    Typography, Button, Box, List, ListItem, ListItemText, Grid, Card, CardContent, Divider
 } from "@mui/material";
+
 // student array 0 is jdoe, 1 is asmith, 2 is bjohnson; NOTE: i (start from 0) is not id (start from 1)
 const i = 0;
 
@@ -36,6 +39,18 @@ export default function DashboardPage() {
         handleMenuClose();
         navigate('/');
     };
+
+    const [editTeamOpen, setEditTeamOpen] = useState(false);
+    const [teamProject, setTeamProject] = useState(null);
+
+    const getProjectMemberObjs = (projectId) => {
+        const memberUserIds = mockData.project_users
+            .filter(pu => pu.project_id === projectId)
+            .map(pu => pu.user_id);
+        return mockData.users.filter(user => memberUserIds.includes(user.id));
+    };
+
+    const currentUser = mockData.users[i];
 
     return (
         <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -102,6 +117,28 @@ export default function DashboardPage() {
                                                     }
                                                 </Typography>
                                             </CardContent>
+                                            <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    sx={{ backgroundColor: "white", color: "#1976d2", fontWeight: 'bold' }}
+                                                    onClick={() => {
+                                                        const skills = mockData.project_skills
+                                                            .filter(ps => ps.project_id === project.id)
+                                                            .map(ps => {
+                                                                const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                                                                return skill?.name || 'UNDEFINED';
+                                                            });
+                                                        const currentMembers = getProjectMemberObjs(project.id);
+
+                                                        // Pack both "skills" and "currentMembers" into "teamProject"
+                                                        setTeamProject({ ...project, skills, currentMembers });
+                                                        setEditTeamOpen(true);
+                                                    }}
+                                                >
+                                                    Edit Team
+                                                </Button>
+                                            </Box>
                                         </Card>
                                     </Grid>
                                 );
@@ -145,21 +182,10 @@ export default function DashboardPage() {
                     </Box>
                 </Box>
 
-                {/* My Profile Pop-up Window */}
-                <Dialog open={myProfileOpen} onClose={handleMyProfileClose}>
-                    <DialogTitle align="center" variant="h6">My Profile</DialogTitle>
-                    <DialogContent>
-                        <Typography variant="subtitle1"><strong>Name:</strong> {mockData.users[i].name || "UNDEFINED in mockData"}</Typography>
-                        <Typography variant="subtitle1"><strong>VT Username:</strong> {mockData.users[i].username}</Typography>
-                        <Typography variant="subtitle1"><strong>Email:</strong> {mockData.users[i].edupersonprincipalname}</Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleMyProfileClose}>Cancel</Button>
-                        <Button variant="contained" onClick={handleMyProfileClose}>OK</Button>
-                    </DialogActions>
-                </Dialog>
+                {/* My Profile (Pop-up Window) */}
+                <ProfileDialog open={myProfileOpen} onClose={handleMyProfileClose} user={currentUser} />
 
-                {/* My Skills Pop-up Window (referred from components) */}
+                {/* My Skills (Pop-up Window) */}
                 <MySkillsDialog
                     open={mySkillsOpen}
                     onClose={handleMySkillsClose}
@@ -167,7 +193,17 @@ export default function DashboardPage() {
                     userSkills={mockData?.user_skills}
                     userId={mockData?.users?.[i]?.id}
                 />
-
+                {/* Edit Team (Pop-up Window) （Only enable for project manager) */}
+                <EditTeamDialog
+                    open={editTeamOpen}
+                    onClose={() => setEditTeamOpen(false)}
+                    project={teamProject || {}}
+                    setProject={setTeamProject}
+                    onSave={(updatedProject) => {
+                        console.log("Team updated:", updatedProject);
+                        setEditTeamOpen(false);
+                    }}
+                />
             </Box>
         </Box >
     );
