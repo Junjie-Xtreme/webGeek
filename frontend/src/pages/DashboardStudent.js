@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
     AppBar, Toolbar, Typography, Button, Box, List, ListItem, ListItemText, Menu, MenuItem, Grid, Card, CardContent, TextField,
-    Dialog, DialogTitle, DialogContent, DialogActions, Checkbox
+    Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, Divider
 } from "@mui/material";
 // student array 0 is jdoe, 1 is asmith, 2 is bjohnson; NOTE: i (start from 0) is not id (start from 1)
 const i = 0;
@@ -59,10 +59,12 @@ export default function DashboardPage() {
                             <ListItemText primary="My Profile"
                                 sx={{ textAlign: "center" }} />
                         </ListItem>
+                        <Divider />
                         <ListItem button onClick={handleMySkillsOpen} sx={{ cursor: "pointer" }}>
                             <ListItemText primary="My Skills"
                                 sx={{ textAlign: "center" }} />
                         </ListItem>
+                        <Divider />
                     </List>
                 </Box>
 

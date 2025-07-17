@@ -36,7 +36,7 @@ export default function EditProjectDialog({
           fullWidth
           label="Project Name"
           margin="normal"
-          value={project.title || ''}
+          value={project.title || '"UNDEFINED"'}
           onChange={handleChange('title')}
         />
         <TextField
@@ -45,14 +45,14 @@ export default function EditProjectDialog({
           rows={3}
           label="Description"
           margin="normal"
-          value={project.description || ''}
+          value={project.description || '"UNDEFINED"'}
           onChange={handleChange('description')}
         />
         <TextField
           fullWidth
-          label="Required Skills (comma-separated)"
+          label="Required Skills"
           margin="normal"
-          value={project.skills?.join(', ') || ''}
+          value={project.skills?.join(', ') || '"UNDEFINED"'}
           onChange={handleSkillChange}
         />
         <TextField
@@ -60,13 +60,30 @@ export default function EditProjectDialog({
           type="number"
           label="Max Capacity"
           margin="normal"
-          value={project.maxCapacity || ''}
-          onChange={handleChange('maxCapacity')}
+          value={project.maxCapacity}
+          onChange={(e) => {
+            setProject(prev => ({
+              ...prev,
+              maxCapacity: e.target.value,
+            }));
+          }}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={() => onSave(project)}>Save</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            const val = project.maxCapacity;
+            if (!Number.isInteger(val) || val < 1) {
+              alert("Please enter a valid integer ≥ 1 for Max Capacity");
+              return;
+            }
+            onSave({ ...project, maxCapacity: val });
+          }}
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );
