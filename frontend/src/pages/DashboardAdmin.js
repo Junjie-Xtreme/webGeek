@@ -1,11 +1,10 @@
 // src/pages/DashboardAdmin.js
 import mockData from '../mockdatafrommike';
-//import { mockStudent } from '../mockStudent';
-import { mockProjects } from '../mockProjects';
 
 // components
 import TopBarMaroon from '../components/TopBarMaroon';
 import EditProjectDialog from '../components/EditProjectDialog';
+import EditTeamDialog from '../components/EditTeamDialog';
 
 // hooks
 import React, { useState } from "react";
@@ -32,6 +31,7 @@ import {
   Drawer,
   IconButton,
   Divider,
+  Stack
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -73,6 +73,9 @@ export default function DashboardPage() {
   const [editProjectOpen, setEditProjectOpen] = useState(false);
   const [editableProject, setEditableProject] = useState(null);
 
+  const [editTeamOpen, setEditTeamOpen] = useState(false);
+  const [teamProject, setTeamProject] = useState(null);
+
   return (
     <Box sx={{ display: "flex", height: "100vh", flexDirection: "column" }}>
       {/* Maroon Top Bar */}
@@ -106,13 +109,13 @@ export default function DashboardPage() {
           }}
         >
           <List>
-            <Divider />
             <ListItem><ListItemText primary="Account Settings" primaryTypographyProps={{
               sx: {
                 fontWeight: 700,
                 color: 'white',
                 textAlign: 'center',
-                gap: 0
+                gap: 0,
+                cursor: "pointer"
               }
             }} /><SettingsIcon sx={{ color: 'white' }} /></ListItem>
             <Divider />
@@ -120,7 +123,8 @@ export default function DashboardPage() {
               sx: {
                 fontWeight: 700,
                 color: 'white',
-                textAlign: 'center'
+                textAlign: 'center',
+                cursor: "pointer"
               }
             }}
             /></ListItem>
@@ -129,7 +133,8 @@ export default function DashboardPage() {
               sx: {
                 fontWeight: 700,
                 color: 'green',
-                textAlign: 'center'
+                textAlign: 'center',
+                cursor: "pointer"
               }
             }}
             /> </ListItem>
@@ -187,24 +192,43 @@ export default function DashboardPage() {
                           </Typography>
                         </CardContent>
                         <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            sx={{ backgroundColor: "white", color: "#1976d2", fontWeight: 'bold' }}
-                            onClick={() => {
-                              // Extract the array of skill names
-                              const relatedSkillNames = mockData.project_skills
-                                .filter(ps => ps.project_id === project.id)
-                                .map(ps => {
-                                  const skill = mockData.skills.find(s => s.id === ps.skill_id);
-                                  return skill?.name || 'UNDEFINED';
-                                });
-                              setEditableProject({ ...project, skills: relatedSkillNames });
-                              setEditProjectOpen(true);
-                            }}
-                          >
-                            Edit
-                          </Button>
+                          <Stack direction="row" spacing={1}>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{ backgroundColor: "white", color: "#1976d2", fontWeight: 'bold' }}
+                              onClick={() => {
+                                const relatedSkillNames = mockData.project_skills
+                                  .filter(ps => ps.project_id === project.id)
+                                  .map(ps => {
+                                    const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                                    return skill?.name || 'UNDEFINED';
+                                  });
+                                setEditableProject({ ...project, skills: relatedSkillNames });
+                                setEditProjectOpen(true);
+                              }}
+                            >
+                              Edit Project
+                            </Button>
+
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{ backgroundColor: "white", color: "#1976d2", fontWeight: 'bold' }}
+                              onClick={() => {
+                                const skills = mockData.project_skills
+                                  .filter(ps => ps.project_id === project.id)
+                                  .map(ps => {
+                                    const skill = mockData.skills.find(s => s.id === ps.skill_id);
+                                    return skill?.name || 'UNDEFINED';
+                                  });
+                                setTeamProject({ ...project, skills });
+                                setEditTeamOpen(true);
+                              }}
+                            >
+                              Edit Team
+                            </Button>
+                          </Stack>
                         </Box>
                       </Card>
                     </Grid>
@@ -285,6 +309,18 @@ export default function DashboardPage() {
             onSave={(updatedProject) => {
               console.log("Saving updated project:", updatedProject);
               setEditProjectOpen(false);
+            }}
+          />
+
+          {/* Edit Team (Pop-up Window) */}
+          <EditTeamDialog
+            open={editTeamOpen}
+            onClose={() => setEditTeamOpen(false)}
+            project={teamProject || {}}
+            setProject={setTeamProject}
+            onSave={(updatedProject) => {
+              console.log("Team updated:", updatedProject);
+              setEditTeamOpen(false);
             }}
           />
         </Box>
