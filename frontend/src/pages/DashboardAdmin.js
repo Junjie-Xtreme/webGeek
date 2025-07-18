@@ -1,21 +1,18 @@
 // src/pages/DashboardAdmin.js
-//import { mockData } from '../mock_data';
-//import { mockProjects } from '../mockProjects';
-//import { mockStudent } from '../mockStudent';
-
 import mockData from '../mockdatafrommike';
 // components
 import TopBarMaroon from '../components/TopBarMaroon';
 import ProfileDialog from '../components/ProfileDialog';
 import EditProjectDialog from '../components/EditProjectDialog';
 import EditTeamDialog from '../components/EditTeamDialog';
+import CreateProjectDialog from '../components/CreateProject';
 // hooks
 import React, { useState } from "react";
 // loginPage.js navigate
 import { useNavigate } from 'react-router-dom';
 import {
-  Typography, Button, Box, List, ListItem, ListItemText, Grid, Card, CardContent,
-  TextField, Dialog, DialogTitle, DialogContent, DialogActions, Drawer, IconButton, Divider, Stack
+  Typography, Button, Box, List, ListItem, ListItemText, Grid, Card, CardContent, MenuItem,
+  TextField, Dialog, DialogTitle, DialogContent, DialogActions, Drawer, IconButton, Divider, Stack, Select, FormControl, InputLabel,
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -45,6 +42,7 @@ export default function DashboardPage() {
   const handleCreateProjectClose = () => setCreateProjectOpen(false);
   const handleMyProfileOpen = () => { handleMenuClose(); setMyProfileOpen(true) };
   const handleMyProfileClose = () => setMyProfileOpen(false);
+  const [selectedSemester, setSelectedSemester] = useState("");
 
   const navigate = useNavigate();
   const handleLogout = () => {
@@ -111,15 +109,19 @@ export default function DashboardPage() {
               }
             }} /><SettingsIcon sx={{ color: 'white' }} /></ListItem>
             <Divider />
-            <ListItem button onClick={() => setPopupOpen(true)}><ListItemText primary="+ Create Project" primaryTypographyProps={{
-              sx: {
-                fontWeight: 700,
-                color: 'white',
-                textAlign: 'center',
-                cursor: "pointer"
-              }
-            }}
-            /></ListItem>
+            <ListItem button onClick={() => setCreateProjectOpen(true)}>
+              <ListItemText
+                primary="+ Create Project"
+                primaryTypographyProps={{
+                  sx: {
+                    fontWeight: 700,
+                    color: 'white',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                  }
+                }}
+                />
+            </ListItem>
             <Divider />
             <ListItem button><ListItemText primary="MATCH" primaryTypographyProps={{
               sx: {
@@ -145,7 +147,18 @@ export default function DashboardPage() {
               borderRadius: '8px',
             }} onClick={() => setPopupOpen(true)} color="inherit">+ Add Semester</Button>
             <TextField size="small" placeholder="Search Project.." sx={{ bgcolor: "white", borderRadius: 1 }} />
-            <TextField size="small" placeholder="Filter Semester" sx={{ bgcolor: "white", borderRadius: 1 }} />
+            <FormControl size="small" sx={{width: 200}}>
+            <InputLabel id="semester-select-label">Filter by Semester</InputLabel>
+            <Select 
+              label="Filter Semester"
+              onChange={(e) => {setSelectedSemester(e.target.value)}}>
+              {mockData.semesters.map((semester) => ( 
+                <MenuItem key={semester.id} value={semester.id}>
+                  {semester.displayName}
+                </MenuItem>
+              ))}
+              </Select>
+            </FormControl>
           </Box>
 
           {/* Cards Area */}
@@ -159,7 +172,7 @@ export default function DashboardPage() {
                     .filter(ps => ps.project_id === project.id)
                     .map(ps => {
                       const skill = mockData.skills.find(s => s.id === ps.skill_id);
-                      return skill?.name || 'UNDEFINED';
+                      return skill?.name || "UNDEFINED";
                     });
 
                   return (
@@ -251,21 +264,13 @@ export default function DashboardPage() {
                         .join(', ') || 'None'
                     }
                   </Typography>
-                  <Typography gutterBottom>Team Name: {selectedProject.teamName || '"UNDEFINED"'}</Typography>
                   <Typography gutterBottom>
-                  Current Members:
+                    Team Name: {selectedProject.teamName || '"UNDEFINED"'}
                   </Typography>
                   <Typography gutterBottom>
-                    Max Capacity: {selectedProject.maxCapacity}
+                    Current Members:
                   </Typography>
                   <Typography gutterBottom>
-                    Team Name: {selectedProject.teamName}
-                  </Typography>
-                  <Typography gutterBottom>
-                    Created At: {selectedProject.created_at}
-                  </Typography>
-                  <Typography gutterBottom>
-                    Updated At: {selectedProject.updated_at}
                     Capacity: {
                       mockData.project_users.filter(pu => pu.project_id === selectedProject.id).length
                     }/{selectedProject.maxCapacity}
@@ -275,6 +280,12 @@ export default function DashboardPage() {
                         : ' (Open)'
                     }
                   </Typography>
+                  <Typography gutterBottom>
+                    Created At: {selectedProject.created_at}
+                  </Typography>
+                  <Typography gutterBottom>
+                    Updated At: {selectedProject.updated_at}
+                  </Typography>
                 </Box>
               ) : (
                 <Typography variant="h6" sx={{ mt: 2 }}>Select a project to view details.</Typography>
@@ -283,17 +294,13 @@ export default function DashboardPage() {
           </Box>
 
           {/* Create Project (Pop-up Window) */}
-          <Dialog open={createProjectOpen} onClose={handleCreateProjectClose}>
-            <DialogTitle>Create Project</DialogTitle>
-            <DialogContent>
-              <TextField fullWidth label="Project Name" margin="normal" />
-              <TextField fullWidth multiline rows={4} label="Description" margin="normal" />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCreateProjectClose}>Cancel</Button>
-              <Button variant="contained" onClick={handleCreateProjectClose}>Create</Button>
-            </DialogActions>
-          </Dialog>
+          <CreateProjectDialog
+            open={createProjectOpen}
+            onClose={() => setCreateProjectOpen(false)}
+            onCreate={(newProject) => {
+            console.log('Created project:', newProject);
+            setCreateProjectOpen(false);
+            }}/>
 
           {/* My Profile (Pop-up Window) */}
           <ProfileDialog open={myProfileOpen} onClose={handleMyProfileClose} user={currentUser} />
