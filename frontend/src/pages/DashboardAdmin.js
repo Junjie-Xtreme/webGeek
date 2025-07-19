@@ -6,6 +6,8 @@ import ProfileDialog from '../components/ProfileDialog';
 import EditProjectDialog from '../components/EditProjectDialog';
 import EditTeamDialog from '../components/EditTeamDialog';
 import CreateProjectDialog from '../components/CreateProject';
+import CreateSemesterDialog from '../components/AddSemester';
+
 // hooks
 import React, { useState } from "react";
 // loginPage.js navigate
@@ -27,9 +29,6 @@ export default function DashboardPage() {
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  //const handlePopupOpen = () => setPopupOpen(true);
-  //const handlePopupClose = () => setPopupOpen(false);
-
   const drawerWidth = 300;
   const [open, setOpen] = useState(true);
   const handleDrawerOpen = () => setOpen(true);
@@ -43,14 +42,13 @@ export default function DashboardPage() {
   const handleMyProfileOpen = () => { handleMenuClose(); setMyProfileOpen(true) };
   const handleMyProfileClose = () => setMyProfileOpen(false);
   const [selectedSemester, setSelectedSemester] = useState("");
+  const [createSemesterOpen, setCreateSemesterOpen] = useState(false);
 
   const navigate = useNavigate();
   const handleLogout = () => {
     handleMenuClose();
     navigate('/');
   };
-
-  const [projects, setProjects] = useState([]);
 
   const [editProjectOpen, setEditProjectOpen] = useState(false);
   const [editableProject, setEditableProject] = useState(null);
@@ -145,7 +143,7 @@ export default function DashboardPage() {
               justifyContent: 'center',
               border: '1px solid gray',
               borderRadius: '8px',
-            }} onClick={() => setPopupOpen(true)} color="inherit">+ Add Semester</Button>
+            }} onClick={() => setCreateSemesterOpen(true)} color="inherit">+ Add Semester</Button>
             <TextField size="small" placeholder="Search Project.." sx={{ bgcolor: "white", borderRadius: 1 }} />
             <FormControl size="small" sx={{width: 200}}>
             <InputLabel id="semester-select-label">Filter by Semester</InputLabel>
@@ -301,6 +299,16 @@ export default function DashboardPage() {
             console.log('Created project:', newProject);
             setCreateProjectOpen(false);
             }}/>
+
+          {/* Create Semester (Pop-up Window) */}
+          <CreateSemesterDialog
+            open={createSemesterOpen}
+            onClose={() => setCreateSemesterOpen(false)}
+            onAdd={(newSemester) => {
+              console.log("Creating semester:", newSemester);
+            setCreateSemesterOpen(false);
+          }}
+          />
 
           {/* My Profile (Pop-up Window) */}
           <ProfileDialog open={myProfileOpen} onClose={handleMyProfileClose} user={currentUser} />
